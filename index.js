@@ -28,8 +28,8 @@ app.get("/", (req, res) => {
   res.json("healthy");
 });
 
-app.get("/test", (req, res) => {
-  res.json("Test Successfully");
+app.get("/testing", (req, res) => {
+  res.json("Test Succssfully");
 });
 
 app.listen(port, () => {
