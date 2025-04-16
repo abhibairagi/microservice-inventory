@@ -3,33 +3,36 @@ name: Build & Push Docker Image to GCR
 on:
   push:
     branches:
-      - main  # Run on push to main branch
+      - main # Run on push to main branch
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout source code
-      uses: actions/checkout@v3
+      - name: Checkout source code
+        uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v1
-      with:
-        credentials_json: '${{ secrets.GCP_SA_KEY }}'
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.GCP_SA_KEY }}"
 
-    - name: Configure Docker for GCR
-      run: |
-        gcloud auth configure-docker ${{ secrets.GCR_REGION }} -q
+      - name: Configure Docker for GCR
+        run: |
+          gcloud auth configure-docker ${{ secrets.GCR_REGION }} -q
 
-    - name: Build and Push Docker Image
-      run: |
-        IMAGE=${{ secrets.GCR_REGION }}/${{ secrets.GCP_PROJECT_ID }}/inventory-apo:${{ github.sha }}
-        docker build -t $IMAGE .
-        docker push $IMAGE
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE=${{ secrets.GCR_REGION }}/${{ secrets.GCP_PROJECT_ID }}/inventory-api:latest
+          docker build -t $IMAGE .
+          docker push $IMAGE
 
-    - name: Output Docker Image URL
-      run: echo "Docker image pushed: ${{ secrets.GCR_REGION }}/${{ secrets.GCP_PROJECT_ID }}/inventory-apo:${{ github.sha }}"
+      - name: Output Docker Image URL
+        run: |
+          IMAGE="${{ secrets.GCR_REGION }}/${{ secrets.GCP_PROJECT_ID }}/inventory-api:latest"
+          echo "Docker image pushed: $IMAGE"
+        shell: bash
